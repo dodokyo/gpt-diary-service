@@ -2,6 +2,8 @@ import { Input, Button, message } from "antd";
 import { useState } from "react";
 import { Title } from "./CommonStyles";
 import styled from "styled-components";
+import { FileImageOutlined } from "@ant-design/icons";
+import html2canvas from "html2canvas";
 
 const { TextArea } = Input;
 
@@ -30,6 +32,49 @@ const DiaryInput = ({ isLoading, onSubmit, messageApi }) => {
     setUserInput(null);
   };
 
+  const captureAndDownload = async () => {
+    const nodeToCapture = document.getElementById("capture");
+    console.log(nodeToCapture);
+    // HTML2Canvas를 사용하여 노드의 스크린샷을 생성합니다.
+    html2canvas(nodeToCapture, {
+      allowTaint: true,
+      useCORS: true,
+    }).then(function (canvas) {
+      // 스크린샷을 이미지로 변환합니다.
+      const image = canvas.toDataURL("image/png");
+
+      // 이미지를 다운로드할 수 있는 링크를 생성합니다.
+      const a = document.createElement("a");
+      a.href = image;
+      a.download = "gpt-diary-result.png";
+      a.click();
+    });
+
+    // // HTML 요소를 가져옵니다.
+    // const elementToCapture = document.getElementById("capture");
+    // const { cropPositionTop, cropPositionLeft, cropWidth, cropHeigth } = {
+    //   cropPositionTop: 0,
+    //   cropPositionLeft: 0,
+    //   cropWidth: elementToCapture.offsetWidth,
+    //   cropHeigth: elementToCapture.offsetHeight,
+    // };
+
+    // html2canvas(elementToCapture).then((canvas) => {
+    //   let croppedCanvas = document.createElement("canvas");
+    //   let croppedCanvasContext = croppedCanvas.getContext("2d");
+
+    //   croppedCanvas.width = cropWidth;
+    //   croppedCanvas.height = cropHeigth;
+
+    //   croppedCanvasContext.drawImage(canvas, cropPositionLeft, cropPositionTop);
+
+    //   const a = document.createElement("a");
+    //   a.href = croppedCanvas.toDataURL();
+    //   a.download = "receipt.png";
+    //   a.click();
+    // });
+  };
+
   /*
   안녕하세요. 저에겐 사귄지 3년쯤된 여친이 있는데요. 
   나이는 저랑 동갑이예요. 귀엽고 싹싹하고 다 좋은데 뭐가 문제냐면 저를 자꾸 때려요. 
@@ -55,7 +100,15 @@ const DiaryInput = ({ isLoading, onSubmit, messageApi }) => {
         <Button loading={isLoading} onClick={handleClick}>
           GPT 회고록을 작성해줘!
         </Button>
+        <Button
+          icon={<FileImageOutlined />}
+          loading={isLoading}
+          onClick={captureAndDownload}
+        >
+          저장
+        </Button>
       </ButtonContainer>
+      <canvas id="canvas" style={{ display: "none" }}></canvas>
     </div>
   );
 };
@@ -67,4 +120,5 @@ const ButtonContainer = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
+  gap: 5px;
 `;

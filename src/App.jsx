@@ -48,7 +48,9 @@ function App() {
         isLoading={isLoading}
         onSubmit={handleSubmit}
       />
-      <DiaryDisplay isLoading={isLoading} data={data} />
+      <div id="capture">
+        <DiaryDisplay isLoading={isLoading} data={data} />
+      </div>
     </AppConatiner>
   );
 }
